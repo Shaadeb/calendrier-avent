@@ -46,7 +46,7 @@
       100% { transform: translateY(110vh) translateX(20px); }
     }
 
-    /* 🔧 Mode test (masqué par défaut, visible seulement si ?test=1) */
+    /* 🔧 Mode test (VISIBLE pour la présentation) */
     .test-panel {
       position: fixed;
       top: 10px;
@@ -58,7 +58,7 @@
       border-radius: 999px;
       backdrop-filter: blur(6px);
       z-index: 1000;
-      display: none;
+      display: flex;
       align-items: center;
       gap: 6px;
     }
@@ -229,7 +229,7 @@
   }
 </script>
 
-<!-- Mode test (affiché seulement si ?test=1 dans l'URL) -->
+<!-- Mode test VISIBLE pour la démo -->
 <div class="test-panel" id="test-panel">
   Test&nbsp;:
   <select id="simulate-day">
@@ -297,7 +297,6 @@
   const CALENDAR_YEAR = 2025;
   const ORDER = [10,22,18,15,17,14,21,20,12,19,23,16,11,9,13,24];
 
-  // Images
   const IMAGES = {
     9:  "09_12 (15).png",
     10: "09_12 (3).png",
@@ -319,7 +318,7 @@
     expired: "offre-expiree.png"
   };
 
-  let simulatedDay = null; // pour le mode test
+  let simulatedDay = null;
 
   function getBaseDate() {
     if (simulatedDay) return new Date(CALENDAR_YEAR, 11, simulatedDay);
@@ -401,24 +400,13 @@
     if (e.target.id === "offer-modal-backdrop") e.target.classList.remove("active");
   });
 
-  // Mode test : affiché seulement si ?test=1
-  function initTestPanel() {
-    const params = new URLSearchParams(window.location.search);
-    const test = params.get("test");
-    const panel = document.getElementById("test-panel");
-    const select = document.getElementById("simulate-day");
-
-    if (test === "1") {
-      panel.style.display = "flex";
-      select.addEventListener("change", (e) => {
-        simulatedDay = e.target.value ? parseInt(e.target.value) : null;
-        buildCalendar();
-      });
-    }
-  }
+  // Mode test visible : changement du jour simulé
+  document.getElementById("simulate-day").addEventListener("change", (e) => {
+    simulatedDay = e.target.value ? parseInt(e.target.value) : null;
+    buildCalendar();
+  });
 
   window.addEventListener("DOMContentLoaded", () => {
-    initTestPanel();
     buildCalendar();
   });
 </script>
