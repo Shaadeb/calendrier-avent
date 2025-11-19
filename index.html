@@ -46,7 +46,7 @@
       100% { transform: translateY(110vh) translateX(20px); }
     }
 
-    /* 🔧 Mode test (VISIBLE) */
+    /* 🔧 Mode test */
     .test-panel {
       position: fixed;
       top: 10px;
@@ -71,7 +71,6 @@
       font-size: 0.7rem;
       cursor: pointer;
     }
-    .test-panel option { color: #000; }
 
     .page-wrapper {
       width: 100%;
@@ -113,9 +112,6 @@
       justify-items: center;
     }
 
-    @media (max-width: 768px) { .calendar-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 480px) { .calendar-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
-
     .day {
       border-radius: 18px;
       background: var(--white);
@@ -133,6 +129,7 @@
       transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
       position: relative;
     }
+
     .day-number { font-size: 1.6rem; font-weight: 600; }
     .day-label { font-size: 0.7rem; text-transform: uppercase; color: var(--red); }
 
@@ -144,14 +141,6 @@
     .day--locked::after { content: "🔒"; position: absolute; top: 8px; right: 8px; font-size: 0.9rem; }
 
     .day--expired .day-label { color: #555; }
-
-    .footer-note {
-      text-align: center;
-      font-size: 0.7rem;
-      opacity: 0.9;
-      margin-top: 12px;
-      line-height: 1.4;
-    }
 
     /* Modal */
     .modal-backdrop {
@@ -205,11 +194,12 @@
       color: #fff;
     }
 
-    .legal-offer {
+    .footer-note {
+      text-align: center;
       font-size: 0.7rem;
-      opacity: 0.85;
-      margin-top: 10px;
-      line-height: 1.3;
+      opacity: 0.9;
+      margin-top: 12px;
+      line-height: 1.4;
     }
 
   </style>
@@ -231,9 +221,9 @@
   }
 </script>
 
-<!-- Mode test VISIBLE -->
-<div class="test-panel" id="test-panel">
-  Test&nbsp;:
+<!-- Mode test -->
+<div class="test-panel">
+  Test :
   <select id="simulate-day">
     <option value="">Aujourd’hui</option>
     <option value="9">9</option>
@@ -275,6 +265,11 @@
     </div>
 
     <div class="calendar-grid" id="calendar-grid"></div>
+
+    <p class="footer-note">
+      Offres valables dans les restaurants d’Amiens centre-ville, Amiens Glisy, Montdidier et Breteuil — © McDonald’s™ 2025<br>
+      Offres non cumulables. Dans la limite des stocks disponibles. Photos non contractuelles.
+    </p>
   </section>
 </div>
 
@@ -285,10 +280,6 @@
     <h2 id="modal-title"></h2>
     <img id="modal-image" src="" alt="">
     <p id="modal-text"></p>
-    <p class="legal-offer">
-      Offre disponible via l’onglet Avantages en borne ou sur l’application McDo+.<br>
-      Offre non cumulable, valable uniquement le jour indiqué.
-    </p>
   </div>
 </div>
 
@@ -376,15 +367,27 @@
     if (status === "locked") {
       title.textContent = "Rien à voir ici… pour le moment 🎁";
       img.src = IMAGES.locked;
-      text.textContent = "Cette case s’ouvrira le " + formatDateFr(day) + ". Patience !";
-    } else if (status === "current") {
+      text.innerHTML = "Cette case s’ouvrira le " + formatDateFr(day) + ". Patience !";
+    }
+
+    else if (status === "current") {
       title.textContent = "Offre du " + day + " décembre";
       img.src = IMAGES[day];
-      text.textContent = "";
-    } else {
+
+      text.innerHTML = `
+        <strong>Disponible via l’onglet Avantages en borne ou sur l’application McDo+.</strong><br>
+        Offre non cumulable, valable uniquement le ${formatDateFr(day)}.
+      `;
+    }
+
+    else {
       title.textContent = "Offre expirée";
       img.src = IMAGES.expired;
-      text.textContent = "Cette offre était valable le " + formatDateFr(day) + " uniquement.";
+
+      text.innerHTML = `
+        Cette offre était valable le ${formatDateFr(day)}.<br>
+        <strong>Disponible via l’onglet Avantages en borne ou sur l’application McDo+.</strong>
+      `;
     }
 
     modal.classList.add("active");
